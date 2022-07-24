@@ -11,6 +11,10 @@ function Check-PluginFolder {
 
 	# write-host "Checking for Builder Information"
 
+	if (!(Test-Path -Path $RepositoryPath)){
+		write-host "[ERROR] Repository folder is missing!" -ForegroundColor red
+	}
+
 	$pluginFolderList = Get-ChildItem -Path $RepositoryPath
 
 	# $buildinfoSuccess = $null
@@ -39,6 +43,7 @@ function Select-Plugins {
 		[string[]]$PluginList
 	)
 
+	# Menu for selecting plugins. Options are populated from the Check-PluginFolder function.
 	$title = "Available L4D2 Plugins"
 	$message = "Select from the following plugins to be installed."
 
@@ -53,7 +58,7 @@ function Create-OutputFolder {
 		New-Item -ItemType "directory" -Path $sessionExportFolder -ea stop
 	}
 	catch{
-		write-host "[WARN] Failed to Create Output Folder" -ForegroundColor red
+		write-host "[ERROR] Failed to Create Output Folder" -ForegroundColor red
 	}
 }
 
@@ -68,10 +73,19 @@ function Start-copyPlugins {
 	)
 
 	foreach ($plugin in $selectedPlugins){
+
+		#Filtering global plugins with selected plugins
 		$currentPlugin = $globalPlugins | where-object -Property Name -like $plugin
-		write-host "Added Plugin:" $currentPlugin.Name
+		write-host "Adding Plugin:" $currentPlugin.Name
 		$pluginContent = $currentPlugin.FullName + "\*"
-		Copy-item -Force -Recurse $pluginContent -Destination $destination
+
+		try{
+			Copy-item -Force -Recurse $pluginContent -Destination $destination -ea stop
+		}
+		catch{
+			write-host "[ERROR] Adding" $currentPlugin.Name "failed!" -ForegroundColor red
+		}
+
 	}
 }
 
