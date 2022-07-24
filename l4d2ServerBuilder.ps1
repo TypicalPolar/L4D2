@@ -1,4 +1,7 @@
 $pluginRepositoryPath = "c:\l4d2-serverbuilder\repository"
+$exportPath = "c:\l4d2-serverbuilder\exports\"
+
+
 
 function Check-PluginFolder {
 	param (
@@ -44,16 +47,32 @@ function Select-Plugins {
 	return $menuOptions[$result]
 }
 
+function Create-OutputFolder {
+	$sessionExportFolder = $exportPath + (Get-Date).toString("yyyy_MM_dd_HH_mm_ss")
+	try{
+		New-Item -ItemType "directory" -Path $sessionExportFolder -ea stop
+	}
+	catch{
+		write-host "[WARN] Failed to Create Output Folder" -ForegroundColor red
+	}
+}
+
 function Start-copyPlugins {
 	param (
 		[Parameter(Mandatory)]
 		[string[]]$selectedPlugins,
 		[Parameter(Mandatory)]
-		[string[]]$globalPlugins
+		[object[]]$globalPlugins,
+		[Parameter(Mandatory)]
+		[string]$destination
 	)
 
-	write-host "Here are the selected" + $selectedPlugins
-	write-host "Here are the available" + $globalPlugins
+	foreach ($plugin in $selectedPlugins){
+		$currentPlugin = $globalPlugins | where-object -Property Name -like $plugin
+		write-host "Added Plugin:" $currentPlugin.Name
+		$pluginContent = $currentPlugin.FullName + "\*"
+		Copy-item -Force -Recurse $pluginContent -Destination $destination
+	}
 }
 
 # function Read-BuilderInformation {
@@ -71,5 +90,9 @@ function Start-copyPlugins {
 # }
 
 $availablePlugins = Check-PluginFolder $pluginRepositoryPath
+
 $selectedPlugins = Select-Plugins $availablePlugins
-Start-copyPlugins $selectedPlugins.label $availablePlugins
+
+$outputfolder = Create-OutputFolder
+
+Start-copyPlugins $selectedPlugins.label $availablePlugins $outputfolder
