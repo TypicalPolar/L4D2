@@ -2,7 +2,6 @@ $pluginRepositoryPath = "c:\l4d2-serverbuilder\repository"
 $pluginFolderList = Get-ChildItem -Path $pluginRepositoryPath
 
 $allAvailablePlugins = @{}
-$buildinfoSuccess = @{}
 
 foreach ($pluginFolder in $pluginFolderList) {
 	$builderFolderLocation = $pluginFolder.FullName + "\builderinfo.csv"
