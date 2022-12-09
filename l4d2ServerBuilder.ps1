@@ -3,7 +3,7 @@ $exportPath = "c:\l4d2-serverbuilder\exports\"
 
 
 
-function Check-PluginFolder {
+function Read-PluginFolder {
 	param (
 		[Parameter(Mandatory)]
 		[string]$RepositoryPath
@@ -43,7 +43,7 @@ function Select-Plugins {
 		[string[]]$PluginList
 	)
 
-	# Menu for selecting plugins. Options are populated from the Check-PluginFolder function.
+	# Menu for selecting plugins. Options are populated from the Read-PluginFolder function.
 	$title = "Available L4D2 Plugins"
 	$message = "Select from the following plugins to be installed."
 
@@ -52,7 +52,7 @@ function Select-Plugins {
 	return $menuOptions[$result]
 }
 
-function Create-OutputFolder {
+function New-OutputFolder {
 	$sessionExportFolder = $exportPath + (Get-Date).toString("yyyy_MM_dd_HH_mm_ss")
 	try{
 		New-Item -ItemType "directory" -Path $sessionExportFolder -ea stop
@@ -103,10 +103,10 @@ function Start-copyPlugins {
 	# }
 # }
 
-$availablePlugins = Check-PluginFolder $pluginRepositoryPath
+$availablePlugins = Read-PluginFolder $pluginRepositoryPath
 
 $selectedPlugins = Select-Plugins $availablePlugins
 
-$outputfolder = Create-OutputFolder
+$outputfolder = New-OutputFolder
 
 Start-copyPlugins $selectedPlugins.label $availablePlugins $outputfolder
