@@ -7,6 +7,8 @@
 
 # General Parameters
 l4d2_installation_dir="$(pwd)/l4d2"
+metamod_latest_url="https://sourcemm.net/latest.php?branch=stable&os=linux&version=1.11"
+sourcemod_latest_url="https://sourcemod.net/latest.php?branch=stable&os=linux&version=1.12"
 
 # Parameters for Script Generation
 server_ip=$(dig @resolver4.opendns.com myip.opendns.com +short) # Gathers the WAN IP of current workstation
@@ -41,3 +43,13 @@ EOF
 
 # Making both shell files executable
 chmod +x start_l4d2.sh update_l4d2.sh
+
+# Installing Metamod
+wget -O $(pwd)/metamod.tar.gz $metamod_latest_url
+tar -xzf $(pwd)/metamod.tar.gz -C $l4d2_installation_dir/left4dead2
+rm metamod.tar.gz
+
+# Installing Sourcemod
+wget -O $(pwd)/sourcemod.tar.gz $sourcemod_latest_url
+tar -xzf $(pwd)/sourcemod.tar.gz -C $l4d2_installation_dir/left4dead2
+rm sourcemod.tar.gz
