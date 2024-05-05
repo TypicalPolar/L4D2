@@ -33,3 +33,11 @@ steamcmd +force_install_dir $l4d2_installation_dir +login anonymous +app_update 
 cat <<EOF > start_l4d2.sh
  ./l4d2/srcds_run -console -game left4dead2 -port 27015 +hostip $server_ip +map $game_map +exec $server_cfg $extra_parameters
 EOF
+
+# Creating Update File
+cat <<EOF > update_l4d2.sh
+ steamcmd +force_install_dir $l4d2_installation_dir +login anonymous +app_update 222860 validate +quit
+EOF
+
+# Making both shell files executable
+chmod +x start_l4d2.sh update_l4d2.sh
