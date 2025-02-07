@@ -7,6 +7,7 @@
 
 # General Parameters
 l4d2_installation_dir="$(pwd)/l4d2"
+l4d2_backup_dir="$(pwd)/backup"
 metamod_latest_url="https://sourcemm.net/latest.php?branch=stable&os=linux&version=1.11"
 sourcemod_latest_url="https://sourcemod.net/latest.php?branch=stable&os=linux&version=1.12"
 
@@ -41,8 +42,22 @@ cat <<EOF > update_l4d2.sh
  steamcmd +force_install_dir $l4d2_installation_dir +login anonymous +app_update 222860 validate +quit
 EOF
 
+cat <<EOF > backup_l4d2.sh
+ SOURCE_DIR=$l4d2_installation_dir
+ BACKUP_DIR=$l4d2_backup_dir
+ CURRENT_DATE=\$(date +"%Y-%m-%d")
+ BACKUP_FILE="l4d2-backup-\${CURRENT_DATE}.zip"
+ tar -czvf "\$BACKUP_DIR/\$BACKUP_FILE" -C "\$SOURCE_DIR" .
+if [ \$? -eq 0 ]; then
+    echo "Backup successful!"
+else
+    echo "Backup failed. Please check the source and backup paths."
+    exit 1
+fi
+EOF
+
 # Making both shell files executable
-chmod +x start_l4d2.sh update_l4d2.sh
+chmod +x start_l4d2.sh update_l4d2.sh backup_l4d2.sh
 
 # Installing Metamod
 wget -O $(pwd)/metamod.tar.gz $metamod_latest_url
